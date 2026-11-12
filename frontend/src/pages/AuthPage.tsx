@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { Aurora } from "../components/fx";
 import { ErrorNote, Logo } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 import { ApiError } from "../lib/api";
@@ -34,10 +35,12 @@ export function AuthPage({ mode }: { mode: "login" | "register" }) {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center px-4 py-12">
-      <Link to="/" className="mb-8"><Logo size={36} /></Link>
-      <form onSubmit={submit} className="card w-full max-w-sm p-6 sm:p-8">
-        <h1 className="text-xl font-bold">{isLogin ? "Welcome back" : "Create your account"}</h1>
+    <div className="relative isolate flex min-h-screen flex-col items-center justify-center overflow-hidden px-4 py-12">
+      <Aurora />
+      <div className="grid-overlay" aria-hidden />
+      <Link to="/" className="rise-in relative mb-8"><Logo size={36} /></Link>
+      <form onSubmit={submit} data-pointer className="card spotlight rise-in relative w-full max-w-sm p-6 shadow-device sm:p-8" style={{ animationDelay: "120ms" }}>
+        <h1 className="font-display text-2xl font-semibold tracking-tight">{isLogin ? "Welcome back" : "Create your account"}</h1>
         <p className="mb-6 mt-1 text-sm text-ink-2">
           {isLogin ? "Sign in to your lecture library." : "Start turning lectures into study notes."}
         </p>

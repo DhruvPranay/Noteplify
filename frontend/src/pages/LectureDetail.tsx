@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { AskView } from "../components/AskView";
 import { FlashcardsView } from "../components/FlashcardsView";
+import { useIndicator } from "../components/fx";
 import { LectureMetrics } from "../components/LectureMetrics";
 import { NotesView } from "../components/NotesView";
 import { Player, type PlayerHandle } from "../components/Player";
@@ -34,9 +35,11 @@ export function LectureDetail() {
   const [editing, setEditing] = useState(false);
   const [title, setTitle] = useState("");
   const player = useRef<PlayerHandle>(null);
+  const tabsRef = useRef<HTMLDivElement>(null);
   const { stop } = useSpeech();
 
   const tab = (TABS.find((t) => t.key === params.get("tab"))?.key ?? "notes") as TabKey;
+  const indicator = useIndicator(tabsRef, `${tab}-${lecture?.status}-${lecture?.flashcard_count}`);
   const setTab = (key: TabKey) => {
     const next = new URLSearchParams(params);
     next.set("tab", key);
@@ -86,8 +89,8 @@ export function LectureDetail() {
   return (
     <div className="space-y-6">
       <div>
-        <Link to="/app" className="inline-flex items-center gap-1 text-sm font-medium text-ink-2 hover:text-ink">
-          <ArrowLeft className="h-4 w-4" /> All lectures
+        <Link to="/app" className="group inline-flex items-center gap-1 text-sm font-medium text-ink-2 transition hover:text-ink">
+          <ArrowLeft className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1" /> All lectures
         </Link>
         <div className="mt-3 flex flex-wrap items-start gap-3">
           <div className="min-w-0 flex-1">
@@ -99,7 +102,7 @@ export function LectureDetail() {
                 <button className="btn-icon" onClick={() => setEditing(false)} aria-label="Cancel"><X className="h-4 w-4" /></button>
               </div>
             ) : (
-              <h1 className="text-2xl font-extrabold leading-tight tracking-tight sm:text-3xl">{lecture.title}</h1>
+              <h1 className="font-display text-3xl font-semibold leading-tight tracking-[-0.03em] sm:text-4xl">{lecture.title}</h1>
             )}
             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted">
               <StatusBadge status={lecture.status} />
@@ -131,17 +134,19 @@ export function LectureDetail() {
       ) : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
           <div className="min-w-0">
-            <div className="mb-5 flex items-center gap-1 overflow-x-auto rounded-xl border border-line bg-surface p-1" role="tablist">
-              {TABS.map(({ key, label, icon: Icon }) => (
-                <button key={key} role="tab" aria-selected={tab === key} onClick={() => setTab(key)}
-                  className={`inline-flex shrink-0 items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-semibold transition ${
-                    tab === key ? "bg-brand text-brand-ink" : "text-ink-2 hover:bg-surface-2 hover:text-ink"}`}>
-                  <Icon className="h-4 w-4" /> {label}
-                  {key === "flashcards" && lecture.flashcard_count > 0 && (
-                    <span className={`rounded-full px-1.5 text-[11px] ${tab === key ? "bg-brand-ink/20" : "bg-surface-2"}`}>{lecture.flashcard_count}</span>
-                  )}
-                </button>
-              ))}
+            <div className="mb-6 max-w-full overflow-x-auto">
+              <div ref={tabsRef} className="seg seg-vivid" role="tablist">
+                <span className="seg-indicator" style={indicator} aria-hidden />
+                {TABS.map(({ key, label, icon: Icon }) => (
+                  <button key={key} role="tab" aria-selected={tab === key} data-active={tab === key} onClick={() => setTab(key)}
+                    className="seg-item py-2 font-semibold">
+                    <Icon className="h-4 w-4" /> {label}
+                    {key === "flashcards" && lecture.flashcard_count > 0 && (
+                      <span className={`rounded-full px-1.5 text-[11px] transition-colors ${tab === key ? "bg-white/25" : "bg-surface-2"}`}>{lecture.flashcard_count}</span>
+                    )}
+                  </button>
+                ))}
+              </div>
             </div>
             <div key={tab} className="animate-fade-in">
               {tab === "notes" && <NotesView lecture={lecture} onSeek={seek} />}

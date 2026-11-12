@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { BrowserRouter, Link, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppLayout } from "./components/AppLayout";
+import { Aurora, usePointerFx } from "./components/fx";
 import { PageLoader } from "./components/ui";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { SpeechProvider } from "./context/SpeechContext";
@@ -20,15 +21,17 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 function NotFound() {
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-3 text-center">
-      <div className="text-6xl font-extrabold text-brand">404</div>
-      <p className="text-ink-2">This page doesn't exist.</p>
-      <Link to="/" className="btn-primary">Go home</Link>
+    <div className="relative flex min-h-screen flex-col items-center justify-center gap-4 overflow-hidden text-center">
+      <Aurora subtle />
+      <div className="text-gradient relative font-display text-8xl font-semibold tracking-tighter sm:text-9xl">404</div>
+      <p className="relative text-ink-2">This page doesn't exist.</p>
+      <Link to="/" className="btn-primary relative">Go home</Link>
     </div>
   );
 }
 
 export default function App() {
+  usePointerFx();
   return (
     <BrowserRouter>
       <AuthProvider>

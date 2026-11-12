@@ -104,33 +104,41 @@ export function FlashcardsView({ lectureId }: { lectureId: number }) {
         </div>
       </div>
 
-      <div className="h-1 overflow-hidden rounded-full bg-surface-2">
-        <div className="h-full bg-good transition-all" style={{ width: `${progress * 100}%` }} />
+      <div className="h-1.5 overflow-hidden rounded-full bg-surface-2">
+        <div className="h-full rounded-full bg-good transition-[width] duration-700 ease-out-expo" style={{ width: `${progress * 100}%` }} />
       </div>
 
-      <div className="flip-card">
-        <div
-          className={`flip-inner relative min-h-[280px] cursor-pointer ${flipped ? "flipped" : ""}`}
-          onClick={() => setFlipped((f) => !f)}
-          role="button"
-          tabIndex={0}
-          aria-label={flipped ? "Show question" : "Show answer"}
-        >
-          <div className="flip-face card absolute inset-0 flex flex-col p-6 sm:p-10">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand">Question</span>
-              <ReadAloudButton compact id={`card-q-${card.id}`} text={card.question} label="Read question" />
+      <div className="relative pb-5 pt-2">
+        {/* the rest of the deck, peeking out underneath */}
+        <div aria-hidden className="absolute inset-x-8 bottom-0 top-6 rounded-[22px] border border-line/60 bg-surface/50" />
+        <div aria-hidden className="absolute inset-x-4 bottom-2.5 top-4 rounded-[22px] border border-line/70 bg-surface/70" />
+        <div key={card.id} className="relative animate-fade-in">
+        <div className="flip-card" data-tilt="6">
+          <div
+            className={`flip-inner relative min-h-[300px] cursor-pointer ${flipped ? "flipped" : ""}`}
+            onClick={() => setFlipped((f) => !f)}
+            role="button"
+            tabIndex={0}
+            aria-label={flipped ? "Show question" : "Show answer"}
+          >
+            <div className="flip-face card absolute inset-0 flex flex-col bg-surface p-6 sm:p-10">
+              <div className="flex items-center justify-between">
+                <span className="eyebrow">Question</span>
+                <ReadAloudButton compact id={`card-q-${card.id}`} text={card.question} label="Read question" />
+              </div>
+              <p className="my-auto py-6 text-center font-display text-xl font-semibold leading-snug tracking-tight sm:text-[26px]">{card.question}</p>
+              <p className="text-center text-xs text-muted">Click or press Space to flip</p>
             </div>
-            <p className="my-auto py-6 text-center text-xl font-semibold leading-snug sm:text-2xl">{card.question}</p>
-            <p className="text-center text-xs text-muted">Click or press Space to flip</p>
-          </div>
-          <div className="flip-face flip-back card absolute inset-0 flex flex-col border-brand/30 bg-brand-soft p-6 sm:p-10">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold uppercase tracking-wider text-brand">Answer</span>
-              <ReadAloudButton compact id={`card-a-${card.id}`} text={card.answer} label="Read answer" />
+            <div className="flip-face flip-back card absolute inset-0 flex flex-col overflow-hidden border-brand/30 bg-surface p-6 sm:p-10">
+              <div aria-hidden className="bg-aurora absolute inset-0 opacity-[0.12]" />
+              <div className="relative flex items-center justify-between">
+                <span className="eyebrow">Answer</span>
+                <ReadAloudButton compact id={`card-a-${card.id}`} text={card.answer} label="Read answer" />
+              </div>
+              <p className="relative my-auto py-6 text-center text-lg leading-relaxed sm:text-xl">{card.answer}</p>
             </div>
-            <p className="my-auto py-6 text-center text-lg leading-relaxed sm:text-xl">{card.answer}</p>
           </div>
+        </div>
         </div>
       </div>
 

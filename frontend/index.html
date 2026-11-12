@@ -7,8 +7,12 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@500;600;700&display=swap" rel="stylesheet" />
     <title>Noteplify — Lectures into notes</title>
+    <script>
+      // The landing page is always dark; set it before first paint to avoid a light flash.
+      if (location.pathname === "/") document.documentElement.classList.add("theme-dark");
+    </script>
   </head>
   <body>
     <div id="root"></div>

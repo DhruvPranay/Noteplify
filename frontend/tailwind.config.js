@@ -22,14 +22,28 @@ export default {
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
+        display: ['"Inter Tight"', "Inter", "system-ui", "-apple-system", "Segoe UI", "sans-serif"],
       },
       boxShadow: {
-        card: "0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px -8px rgb(0 0 0 / 0.10)",
+        card: "var(--shadow-card)",
+        device: "var(--shadow-device)",
+        glow: "0 10px 40px -12px rgb(124 58 237 / 0.55)",
+      },
+      transitionTimingFunction: {
+        spring: "cubic-bezier(0.3, 1.25, 0.4, 1)",
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
       },
       keyframes: {
-        "fade-in": { from: { opacity: 0, transform: "translateY(4px)" }, to: { opacity: 1, transform: "none" } },
+        "fade-in": { from: { opacity: 0, transform: "translateY(6px)" }, to: { opacity: 1, transform: "none" } },
+        "page-in": {
+          from: { opacity: 0, transform: "translateY(14px)", filter: "blur(6px)" },
+          to: { opacity: 1, transform: "none", filter: "none" },
+        },
       },
-      animation: { "fade-in": "fade-in .25s ease-out both" },
+      animation: {
+        "fade-in": "fade-in .35s cubic-bezier(0.16, 1, 0.3, 1) both",
+        "page-in": "page-in .6s cubic-bezier(0.16, 1, 0.3, 1) both",
+      },
     },
   },
   plugins: [],

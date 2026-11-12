@@ -1,110 +1,193 @@
-import { ArrowRight, AudioLines, BookOpenCheck, Gauge, Layers, MessageSquareText, Volume2, Youtube } from "lucide-react";
+import { ArrowRight, ChevronRight, Sparkles } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Aurora, CountUp, Reveal, WordReveal } from "../components/fx";
+import { Bento } from "../components/landing/Bento";
+import { HeroDevice } from "../components/landing/HeroDevice";
+import { ScrubText } from "../components/landing/ScrubText";
+import { Story } from "../components/landing/Story";
 import { Logo } from "../components/ui";
 import { useAuth } from "../context/AuthContext";
 
-const FEATURES = [
-  { icon: AudioLines, title: "Whisper transcription", body: "Silence-aware chunking and parallel Whisper large-v3 calls turn an hour of audio into a timestamped transcript in minutes." },
-  { icon: BookOpenCheck, title: "Structured notes", body: "Sections with headings, summaries, key points and definitions — every section linked back to the moment it was said." },
-  { icon: Layers, title: "Flashcards", body: "Auto-generated active-recall cards with flip, shuffle and a ‘review again’ pile for the ones you missed." },
-  { icon: MessageSquareText, title: "Ask the lecture", body: "Hybrid semantic + keyword search (pgvector + Postgres full-text) grounds every answer in cited transcript excerpts." },
-  { icon: Volume2, title: "Read aloud", body: "Listen to notes, answers and flashcards with the browser's Web Speech API — or ask questions with your voice." },
-  { icon: Gauge, title: "Measured, not guessed", body: "Every run records per-stage timing and processing minutes per audio hour; score accuracy with word error rate." },
+const STATS = [
+  { value: 4.26, decimals: 2, suffix: "%", label: "Word error rate", body: "faster-whisper small, scored against the reference transcript." },
+  { value: 0.38, decimals: 2, suffix: "×", label: "Real-time factor", body: "93 s of audio processed end to end in 36 s, on a laptop CPU." },
+  { value: 5, decimals: 0, suffix: "", label: "Timed pipeline stages", body: "Download, preprocess, transcribe, index and generate." },
+  { value: 2, decimals: 0, suffix: "", label: "Retrieval signals", body: "Vector similarity and full-text search, fused with RRF." },
 ];
 
-const STEPS = [
-  ["Add a lecture", "Upload a recording or paste a YouTube link."],
-  ["We transcribe", "Whisper converts speech to timestamped text."],
-  ["AI organizes", "An LLM writes notes and flashcards; chunks are embedded for search."],
-  ["You study", "Read, listen, quiz yourself and ask questions."],
-];
+const STACK = ["FastAPI", "PostgreSQL", "pgvector", "Whisper", "faster-whisper", "Hugging Face", "Llama 3", "Ollama",
+  "React", "TypeScript", "Tailwind CSS", "Web Speech API", "Docker"];
+
+/** The marketing page is always dark (like a product launch page); the app follows the system. */
+function useForcedDark() {
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.add("theme-dark");
+    return () => root.classList.remove("theme-dark");
+  }, []);
+}
+
+function SiteNav({ signedIn }: { signedIn: boolean }) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const on = () => setScrolled(window.scrollY > 10);
+    on();
+    window.addEventListener("scroll", on, { passive: true });
+    return () => window.removeEventListener("scroll", on);
+  }, []);
+
+  return (
+    <header className={`fixed inset-x-0 top-0 z-50 border-b transition-[background-color,border-color] duration-500 ${
+      scrolled ? "border-line/60 bg-bg/65 backdrop-blur-2xl backdrop-saturate-150" : "border-transparent"}`}>
+      <div className="mx-auto flex h-12 max-w-6xl items-center justify-between px-4 sm:px-6">
+        <Link to="/" aria-label="Noteplify home"><Logo size={24} /></Link>
+        <nav className="hidden items-center gap-8 text-[13px] text-ink-2 md:flex">
+          <a href="#story" className="transition hover:text-ink">How it works</a>
+          <a href="#features" className="transition hover:text-ink">Features</a>
+          <a href="#numbers" className="transition hover:text-ink">Numbers</a>
+        </nav>
+        <div className="flex items-center gap-1.5">
+          {signedIn ? (
+            <Link to="/app" className="btn-primary px-4 py-1.5 text-[13px]">Open app</Link>
+          ) : (
+            <>
+              <Link to="/login" className="rounded-full px-3 py-1.5 text-[13px] text-ink-2 transition hover:text-ink">Sign in</Link>
+              <Link to="/register" className="btn-primary px-4 py-1.5 text-[13px]">Get started</Link>
+            </>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+}
 
 export function Landing() {
+  useForcedDark();
   const { user } = useAuth();
   const cta = user ? "/app" : "/register";
 
   return (
-    <div className="min-h-screen">
-      <header className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Logo />
-        <nav className="flex items-center gap-2">
-          {user ? (
-            <Link to="/app" className="btn-primary">Open app</Link>
-          ) : (
-            <>
-              <Link to="/login" className="btn px-3 text-ink-2 hover:text-ink">Sign in</Link>
-              <Link to="/register" className="btn-primary">Get started</Link>
-            </>
-          )}
-        </nav>
-      </header>
+    <div className="min-h-screen overflow-x-clip bg-bg text-ink">
+      <SiteNav signedIn={Boolean(user)} />
 
-      <section className="relative overflow-hidden">
-        <div className="pointer-events-none absolute inset-x-0 -top-40 mx-auto h-[480px] max-w-4xl rounded-full bg-brand/20 blur-3xl" />
-        <div className="relative mx-auto max-w-4xl px-4 pb-20 pt-16 text-center sm:px-6 sm:pt-24">
-          <span className="chip mb-6 border border-line bg-surface">
-            <Youtube className="h-3.5 w-3.5 text-bad" /> Works with uploads and YouTube links
-          </span>
-          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-6xl">
-            Turn any lecture into
-            <span className="block bg-gradient-to-r from-brand to-fuchsia-500 bg-clip-text text-transparent">notes you'll actually use.</span>
+      {/* Hero */}
+      <section data-pointer className="relative isolate flex min-h-[100svh] flex-col items-center overflow-hidden pb-24 pt-28 sm:pt-36">
+        <Aurora />
+        <div className="grid-overlay" aria-hidden />
+        <div className="pointer-glow" aria-hidden />
+        <div className="relative z-10 mx-auto max-w-5xl px-4 text-center sm:px-6">
+          <Link to={cta}
+            className="rise-in group inline-flex items-center gap-2 rounded-full border border-line/80 bg-surface/50 py-1.5 pl-2 pr-3.5 text-[13px] text-ink-2 backdrop-blur-xl transition hover:border-brand/50 hover:text-ink">
+            <span className="bg-aurora inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold text-white">
+              <Sparkles className="h-3 w-3" /> New
+            </span>
+            Free local AI mode — runs on your own machine
+            <ChevronRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+          <h1 className="mt-8 font-display text-[clamp(2.9rem,8.5vw,6.75rem)] font-semibold leading-[0.95] tracking-[-0.045em]">
+            <WordReveal text="Every lecture." delay={150} step={110} />
+            <span className="rise-in text-gradient block pb-2" style={{ animationDelay: "420ms" }}>Instantly understood.</span>
           </h1>
-          <p className="mx-auto mt-6 max-w-2xl text-lg text-ink-2">
-            Noteplify transcribes your lecture with Whisper, then writes structured notes, flashcards and a
-            searchable Q&A — all linked to the exact second in the recording.
+          <p className="rise-in mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-2 sm:text-xl" style={{ animationDelay: "620ms" }}>
+            Drop in a recording or a YouTube link. Noteplify transcribes it with Whisper, then writes notes, flashcards
+            and answers — each linked to the exact second it was said.
           </p>
-          <div className="mt-9 flex flex-wrap justify-center gap-3">
-            <Link to={cta} className="btn-primary px-6 py-3 text-base">
+          <div className="rise-in mt-10 flex flex-wrap items-center justify-center gap-x-7 gap-y-4" style={{ animationDelay: "780ms" }}>
+            <Link to={cta} className="btn-primary btn-lg">
               Start for free <ArrowRight className="h-4 w-4" />
             </Link>
-            <a href="#how" className="btn-ghost px-6 py-3 text-base">How it works</a>
+            <a href="#story" className="group inline-flex items-center gap-1 text-base font-medium text-brand">
+              See how it works <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            </a>
           </div>
         </div>
+        <HeroDevice className="relative z-10 mt-16 sm:mt-24" />
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pb-20 sm:px-6">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {FEATURES.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="card p-6">
-              <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-brand-soft text-brand">
-                <Icon className="h-5 w-5" />
+      {/* Scroll-scrubbed manifesto */}
+      <section className="mx-auto max-w-5xl px-4 py-28 sm:px-6 sm:py-40">
+        <ScrubText
+          className="font-display text-[clamp(1.9rem,4.6vw,3.6rem)] font-semibold leading-[1.12] tracking-[-0.03em]"
+          text="An hour-long lecture holds about nine thousand words. You need maybe nine hundred of them. Noteplify finds those, organizes them, and links every single one back to the moment it was said." />
+      </section>
+
+      {/* Pinned story */}
+      <section id="story" className="relative">
+        <Reveal className="mx-auto mb-12 max-w-3xl px-4 text-center sm:px-6 lg:mb-0">
+          <div className="eyebrow">How it works</div>
+          <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">From sound to understanding.</h2>
+        </Reveal>
+        <Story />
+      </section>
+
+      {/* Bento features */}
+      <section id="features" className="mx-auto max-w-6xl px-4 py-28 sm:px-6 sm:py-36">
+        <Reveal className="mb-14 max-w-2xl">
+          <div className="eyebrow">Features</div>
+          <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">
+            Everything a lecture needs. <span className="text-muted">Nothing it doesn't.</span>
+          </h2>
+        </Reveal>
+        <Bento />
+      </section>
+
+      {/* Numbers */}
+      <section id="numbers" className="relative mx-auto max-w-6xl px-4 pb-28 sm:px-6 sm:pb-36">
+        <Reveal className="mx-auto max-w-2xl text-center">
+          <div className="eyebrow">Numbers</div>
+          <h2 className="mt-3 font-display text-4xl font-semibold tracking-[-0.035em] sm:text-6xl">Measured on every run.</h2>
+          <p className="mt-4 text-lg text-ink-2">Each lecture records per-stage timing, and transcripts can be scored with word error rate.</p>
+        </Reveal>
+        <div className="mt-14 grid grid-cols-1 gap-px overflow-hidden rounded-[30px] border border-line/70 bg-line/70 sm:grid-cols-2 lg:grid-cols-4">
+          {STATS.map((s) => (
+            <div key={s.label} className="bg-bg p-8">
+              <div className="text-gradient font-display text-5xl font-semibold tracking-tight sm:text-6xl">
+                <CountUp value={s.value} decimals={s.decimals} suffix={s.suffix} />
               </div>
-              <h3 className="font-bold">{title}</h3>
-              <p className="mt-1.5 text-sm leading-relaxed text-ink-2">{body}</p>
+              <div className="mt-4 font-semibold">{s.label}</div>
+              <p className="mt-1 text-sm text-muted">{s.body}</p>
             </div>
           ))}
         </div>
+        <p className="mt-5 text-center text-xs text-muted">
+          Measured on the bundled 93-second benchmark sample (Local AI mode, laptop CPU, models warm).
+        </p>
       </section>
 
-      <section id="how" className="border-y border-line bg-surface">
-        <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-          <h2 className="text-center text-3xl font-extrabold tracking-tight">How it works</h2>
-          <ol className="mt-12 grid gap-6 md:grid-cols-4">
-            {STEPS.map(([title, body], i) => (
-              <li key={title} className="relative">
-                <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full bg-brand text-sm font-bold text-brand-ink">{i + 1}</div>
-                <h3 className="font-bold">{title}</h3>
-                <p className="mt-1 text-sm text-ink-2">{body}</p>
-              </li>
+      {/* Stack marquee */}
+      <section className="border-y border-line/60 py-10" aria-label="Built with">
+        <div className="marquee">
+          <div className="marquee-track">
+            {[...STACK, ...STACK].map((s, i) => (
+              <span key={i} aria-hidden={i >= STACK.length}
+                className="mx-6 whitespace-nowrap font-display text-2xl font-semibold tracking-tight text-muted/70 transition hover:text-ink sm:text-3xl">
+                {s}
+              </span>
             ))}
-          </ol>
-          <div className="mx-auto mt-14 max-w-3xl rounded-2xl border border-line bg-bg p-5 font-mono text-xs leading-relaxed text-ink-2 sm:text-sm">
-            <span className="text-brand">audio</span> → ffmpeg (16 kHz mono, silence-aware ≤30 s chunks) → Whisper large-v3 ×N in parallel
-            <br />→ transcript → 160-word overlapping chunks → MiniLM embeddings → <span className="text-brand">PostgreSQL + pgvector</span>
-            <br />→ map-reduce LLM notes &amp; flashcards → hybrid retrieval (vector + full-text, RRF) for Q&amp;A
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-        <h2 className="text-3xl font-extrabold tracking-tight">Spend your time learning, not transcribing.</h2>
-        <Link to={cta} className="btn-primary mt-8 px-6 py-3 text-base">
-          Create your first notes <ArrowRight className="h-4 w-4" />
-        </Link>
+      {/* Final CTA */}
+      <section className="relative isolate overflow-hidden px-4 py-32 text-center sm:py-44">
+        <Aurora />
+        <Reveal className="relative">
+          <h2 className="font-display text-[clamp(2.6rem,7vw,5.5rem)] font-semibold leading-[1] tracking-[-0.045em]">
+            Spend your time learning.
+            <span className="text-gradient block pb-2">Not transcribing.</span>
+          </h2>
+          <Link to={cta} className="btn-primary btn-lg mt-12">
+            Create your first notes <ArrowRight className="h-4 w-4" />
+          </Link>
+        </Reveal>
       </section>
 
-      <footer className="border-t border-line py-8 text-center text-sm text-muted">
-        Noteplify · Built with FastAPI, PostgreSQL + pgvector, Hugging Face and React
+      <footer className="border-t border-line/60">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-8 text-xs text-muted sm:flex-row sm:px-6">
+          <Logo size={20} />
+          <span>Built with FastAPI, PostgreSQL + pgvector, Whisper and React.</span>
+        </div>
       </footer>
     </div>
   );

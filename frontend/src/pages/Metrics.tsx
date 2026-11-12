@@ -12,7 +12,7 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return (
     <div className="card p-5">
       <div className="text-sm font-medium text-muted">{label}</div>
-      <div className="mt-1.5 text-3xl font-extrabold tracking-tight">{value}</div>
+      <div className="mt-1.5 font-display text-3xl font-semibold tracking-tight">{value}</div>
       {hint && <div className="mt-1 text-xs text-ink-2">{hint}</div>}
     </div>
   );
@@ -36,7 +36,7 @@ export function Metrics() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight">Pipeline metrics</h1>
+        <h1 className="font-display text-4xl font-semibold tracking-[-0.035em] sm:text-5xl">Pipeline metrics</h1>
         <p className="text-ink-2">
           Speed and accuracy of every lecture you've processed
           {health && <> · <span className="font-mono text-xs">{health.mock_ai ? "mock mode" : health.asr_model}</span></>}
