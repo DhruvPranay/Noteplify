@@ -1,0 +1,40 @@
+# Local full stack:  docker compose up --build   ->  http://localhost:8000
+# Put HF_TOKEN=hf_xxx (or MOCK_AI=true) in a .env file next to this one.
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: noteplify
+      POSTGRES_PASSWORD: noteplify
+      POSTGRES_DB: noteplify
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U noteplify -d noteplify"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  app:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://noteplify:noteplify@db:5432/noteplify
+      JWT_SECRET: ${JWT_SECRET:-local-dev-secret-change-me}
+      HF_TOKEN: ${HF_TOKEN:-}
+      MOCK_AI: ${MOCK_AI:-false}
+      ASR_MODEL: ${ASR_MODEL:-openai/whisper-large-v3}
+      LLM_MODEL: ${LLM_MODEL:-meta-llama/Llama-3.1-8B-Instruct}
+      CORS_ORIGINS: http://localhost:8000,http://localhost:5173
+    ports:
+      - "8000:8000"
+    volumes:
+      - uploads:/app/data
+
+volumes:
+  pgdata:
+  uploads:

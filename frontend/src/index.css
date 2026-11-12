@@ -1,0 +1,133 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Semantic color tokens (RGB channels so Tailwind opacity modifiers work). */
+:root {
+  color-scheme: light;
+  --bg: 249 249 247;
+  --surface: 255 255 255;
+  --surface-2: 244 244 241;
+  --ink: 17 17 20;
+  --ink-2: 72 72 80;
+  --muted: 120 120 128;
+  --line: 228 228 222;
+  --brand: 79 70 229;
+  --brand-ink: 255 255 255;
+  --brand-soft: 238 240 255;
+  --good: 12 140 12;
+  --warn: 194 120 0;
+  --bad: 208 59 59;
+
+  /* chart roles — reference palette, light steps */
+  --chart-surface: #fcfcfb;
+  --chart-grid: #e1e0d9;
+  --chart-axis: #c3c2b7;
+  --chart-muted: #898781;
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --bg: 13 13 15;
+    --surface: 24 24 27;
+    --surface-2: 34 34 38;
+    --ink: 240 239 236;
+    --ink-2: 195 194 183;
+    --muted: 137 135 129;
+    --line: 48 48 52;
+    --brand: 129 140 248;
+    --brand-ink: 13 13 15;
+    --brand-soft: 35 33 74;
+    --good: 12 163 12;
+    --warn: 250 178 25;
+    --bad: 230 103 103;
+
+    --chart-surface: #1a1a19;
+    --chart-grid: #2c2c2a;
+    --chart-axis: #383835;
+    --chart-muted: #898781;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+  }
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-bg font-sans text-ink antialiased;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-line bg-surface shadow-card;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition
+      disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50;
+  }
+  .btn-primary {
+    @apply btn bg-brand text-brand-ink hover:bg-brand/90;
+  }
+  .btn-ghost {
+    @apply btn border border-line bg-surface text-ink hover:bg-surface-2;
+  }
+  .btn-icon {
+    @apply inline-flex h-9 w-9 items-center justify-center rounded-lg text-ink-2 transition hover:bg-surface-2 hover:text-ink
+      focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 disabled:opacity-40;
+  }
+  .input {
+    @apply w-full rounded-xl border border-line bg-surface px-3.5 py-2.5 text-sm text-ink placeholder:text-muted
+      focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20;
+  }
+  .label {
+    @apply mb-1.5 block text-sm font-medium text-ink-2;
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full bg-surface-2 px-2.5 py-0.5 text-xs font-medium text-ink-2;
+  }
+  .ts {
+    @apply inline-flex items-center rounded-md bg-brand-soft px-1.5 py-0.5 font-mono text-xs font-semibold text-brand
+      hover:bg-brand hover:text-brand-ink transition;
+  }
+}
+
+.flip-card {
+  perspective: 1200px;
+}
+.flip-inner {
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transform-style: preserve-3d;
+}
+.flip-inner.flipped {
+  transform: rotateY(180deg);
+}
+.flip-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.flip-back {
+  transform: rotateY(180deg);
+}
+
+mark {
+  @apply rounded bg-yellow-200 px-0.5 text-ink dark:bg-yellow-500/40;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-inner {
+    transition: none;
+  }
+}

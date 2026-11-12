@@ -1,0 +1,7 @@
+Welcome back everyone. Today we are going to talk about how neural networks learn from data. A neural network is a function made of layers, and each layer applies a linear transformation followed by a non-linear activation. The parameters of the network are its weights and biases, and training means finding values for them that minimise a loss function. The loss function measures how far the predictions are from the correct answers.
+
+Gradient descent is the algorithm we use to minimise the loss. We compute the gradient of the loss with respect to every parameter, and then we take a small step in the opposite direction. The size of that step is called the learning rate. If the learning rate is too large, training can diverge. If it is too small, training becomes very slow.
+
+Backpropagation is how we compute those gradients efficiently. It is simply the chain rule from calculus, applied from the output layer back to the input layer. Stochastic gradient descent uses small random mini batches of data, which makes every step cheaper and adds noise that often helps.
+
+Finally, remember overfitting. Overfitting happens when a model memorises the training data instead of learning patterns that generalise. We detect it with a separate validation set, and we reduce it with regularisation techniques such as dropout and weight decay. For next week, please read chapter six and try implementing backpropagation by hand.

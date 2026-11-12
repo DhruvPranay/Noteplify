@@ -1,0 +1,6 @@
+# Store text with LF so Docker/Render (Linux) builds match local files
+* text=auto eol=lf
+*.wav binary
+*.flac binary
+*.png binary
+*.ico binary

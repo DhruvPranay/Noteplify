@@ -1,0 +1,8 @@
+# Optional: free, offline AI (TRANSCRIBE_BACKEND=local, EMBEDDING_BACKEND=local).
+# The LLM runs in Ollama (https://ollama.com) with LLM_BACKEND=ollama.
+faster-whisper==1.1.1
+# Pinned: newer ctranslate2 DLLs are blocked by Windows 11 Smart App Control (WinError 4551)
+# until they gain reputation; 4.5.0 loads fine. It still imports pkg_resources, hence setuptools<81.
+ctranslate2==4.5.0
+setuptools<81
+fastembed>=0.5,<1

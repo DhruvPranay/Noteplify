@@ -1,0 +1,5 @@
+-r requirements.txt
+pytest==8.3.4
+httpx==0.28.1
+# Optional: run Whisper locally instead of via the Hugging Face API (TRANSCRIBE_BACKEND=local)
+# faster-whisper==1.1.0
