@@ -27,7 +27,7 @@ export function AppLayout() {
       )}
       <header className="sticky top-0 z-30 border-b border-line/60 bg-bg/70 backdrop-blur-2xl backdrop-saturate-150">
         <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
-          <Link to="/app" className="mr-1 shrink-0 sm:mr-4" aria-label="Noteplify home">
+          <Link to="/" className="mr-1 shrink-0 sm:mr-4" aria-label="Noteplify home page">
             <Logo size={28} />
           </Link>
           <nav ref={navRef} className="seg">
